@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Exo 1 – Panier d’achat</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body{background:#0f172a;color:#e2e8f0}
+    .card{background:#111827;border:1px solid #1f2937}
+  </style>
+</head>
+<body>
+<div class="container py-4">
+  <h1 class="h3 mb-3">Exercice 1 : Gestion d’un panier d’achat</h1>
+
+  <div class="card p-3 mb-3">
+    <div class="row g-2">
+      <div class="col-md-3"><button id="add-ordi" class="btn btn-outline-light w-100">Ordinateur (350 000 XOF)</button></div>
+      <div class="col-md-3"><button id="add-souris" class="btn btn-outline-light w-100">Souris (5 000 XOF)</button></div>
+      <div class="col-md-3"><button id="add-clavier" class="btn btn-outline-light w-100">Clavier (12 500 XOF)</button></div>
+      <div class="col-md-3"><button id="btn-total" class="btn btn-success w-100">Calculer le total</button></div>
+    </div>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-dark table-striped table-sm align-middle" id="cart-table">
+      <thead><tr><th>#</th><th>Nom</th><th>Prix (XOF)</th><th>Quantité</th><th>Total (XOF)</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <p class="fs-5 mt-2"><strong>Le total du panier est de :</strong> <span id="cart-total" class="badge bg-secondary">0 XOF</span></p>
+</div>
+
+<script>
+  // --- Etat du panier : tableau d'objets {nom, prix, quantite}
+  const panier = [];
+  const produits = {
+    ordi:   { nom: "Ordinateur", prix: 350000, quantite: 1 },
+    souris: { nom: "Souris",     prix: 5000,   quantite: 1 },
+    clavier:{ nom: "Clavier",    prix: 12500,  quantite: 1 }
+  };
+
+  function ajouterAuPanier(produit){
+    const exist = panier.find(p => p.nom === produit.nom);
+    if(exist){ exist.quantite += 1; }
+    else{ panier.push({...produit}); }
+    majTable();
+  }
+
+  function calculerTotal(p){ return p.reduce((s,x)=> s + x.prix * x.quantite, 0); }
+  function fmt(n){ return n.toLocaleString('fr-FR') + ' XOF'; }
+
+  function majTable(){
+    const tbody = document.querySelector('#cart-table tbody');
+    tbody.innerHTML = '';
+    panier.forEach((p,i)=>{
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${i+1}</td><td>${p.nom}</td><td>${p.prix.toLocaleString('fr-FR')}</td><td>${p.quantite}</td><td>${(p.prix*p.quantite).toLocaleString('fr-FR')}</td>`;
+      tbody.appendChild(tr);
+    });
+  }
+
+  document.getElementById('add-ordi').onclick   = ()=> ajouterAuPanier(produits.ordi);
+  document.getElementById('add-souris').onclick  = ()=> ajouterAuPanier(produits.souris);
+  document.getElementById('add-clavier').onclick = ()=> ajouterAuPanier(produits.clavier);
+  document.getElementById('btn-total').onclick   = ()=>{
+    document.getElementById('cart-total').textContent = fmt(calculerTotal(panier));
+  };
+</script>
+</body>
+</html>
