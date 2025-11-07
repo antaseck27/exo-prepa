@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Calculatrice</title>
+<style>
+  body { font-family: system-ui, Arial; display:flex; align-items:center; justify-content:center; min-height:100vh; background:#f5f5f5; }
+  .calc { background:#fff; padding:16px; border-radius:12px; box-shadow:0 6px 20px rgba(0,0,0,.08); width:320px; }
+  .screen { width:100%; font-size:28px; padding:10px; text-align:right; border:1px solid #ddd; border-radius:8px; margin-bottom:12px; }
+  .grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+  button { padding:14px; border:1px solid #ddd; background:#fafafa; border-radius:10px; font-size:18px; cursor:pointer; }
+  button.op { background:#eef5ff; }
+  button.equal { background:#e8ffe8; grid-column: span 2; }
+  button.clear { background:#ffecec; }
+</style>
+</head>
+<body>
+  <div class="calc">
+    <input id="screen" class="screen" disabled />
+    <div class="grid">
+      <button class="clear" data-act="clear">C</button>
+      <button data-act="del">DEL</button>
+      <button class="op" data-val="(">(</button>
+      <button class="op" data-val=")">)</button>
+
+      <button data-val="7">7</button>
+      <button data-val="8">8</button>
+      <button data-val="9">9</button>
+      <button class="op" data-val="/">÷</button>
+
+      <button data-val="4">4</button>
+      <button data-val="5">5</button>
+      <button data-val="6">6</button>
+      <button class="op" data-val="*">×</button>
+
+      <button data-val="1">1</button>
+      <button data-val="2">2</button>
+      <button data-val="3">3</button>
+      <button class="op" data-val="-">−</button>
+
+      <button data-val="0">0</button>
+      <button data-val=".">.</button>
+      <button class="op" data-val="+">+</button>
+      <button class="equal" data-act="equal">=</button>
+    </div>
+  </div>
+
+<script>
+  const screen = document.getElementById('screen');
+  let expr = '';
+
+  function render() { screen.value = expr || '0'; }
+
+  document.addEventListener('click', (e) => {
+    if (!(e.target instanceof HTMLButtonElement)) return;
+
+    const val = e.target.dataset.val;
+    const act = e.target.dataset.act;
+
+    if (val) { expr += val; render(); return; }
+
+    if (act === 'clear') { expr = ''; render(); return; }
+    if (act === 'del')   { expr = expr.slice(0, -1); render(); return; }
+    if (act === 'equal') {
+      try {
+        // Sécurité minimale : uniquement chiffres, opérateurs et parenthèses
+        if (!/^[0-9+\-*/().\s]+$/.test(expr)) throw new Error('Expression invalide');
+        const result = Function(`"use strict"; return (${expr})`)();
+        // Gestion division par 0 / résultats non finis
+        if (!isFinite(result)) throw new Error('Calcul impossible');
+        expr = String(result);
+      } catch {
+        expr = 'Erreur';
+        setTimeout(()=>{ expr=''; render(); }, 800);
+      }
+      render();
+    }
+  });
+
+  render();
+</script>
+</body>
+</html>

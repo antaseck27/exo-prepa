@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz chronométré</title>
+<style>
+  body{font-family:Arial;background:#f6f9ff;display:grid;place-items:center;min-height:100vh}
+  .card{background:#fff;padding:20px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.08);width:520px}
+  .q{margin:10px 0}
+  .choices{display:grid;gap:8px}
+  button{padding:10px;border:1px solid #ddd;border-radius:10px;background:#fafafa;cursor:pointer}
+  .primary{background:#2f80ed;color:#fff;border:0}
+  #timer{font-weight:bold;margin-bottom:8px}
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>Quiz (15s par question)</h1>
+  <div id="timer">15</div>
+  <div id="question" class="q"></div>
+  <div id="choices" class="choices"></div>
+  <button id="next" class="primary" disabled>Question suivante</button>
+  <div id="result"></div>
+</div>
+<script>
+  const questions=[
+    {t:"Quelle méthode ajoute à la fin d'un tableau ?", c:["push","pop","shift","unshift"], a:0},
+    {t:"Mot-clé pour une constante ?", c:["var","let","const","static"], a:2},
+    {t:"Convertir une chaîne en entier ?", c:["parseFloat","Number","parseInt","toString"], a:2},
+    {t:"Événement du clic ?", c:["submit","change","click","input"], a:2},
+    {t:"Objet → JSON texte ?", c:["JSON.parse","JSON.stringify","toJSON","objectToText"], a:1}
+  ];
+  let i=0, score=0, sel=-1, t=15, itv=null;
+  const timer=document.getElementById('timer'),
+        q=document.getElementById('question'),
+        choices=document.getElementById('choices'),
+        next=document.getElementById('next'),
+        result=document.getElementById('result');
+
+  function startTimer(){
+    clearInterval(itv); t=15; timer.textContent=t;
+    itv=setInterval(()=>{ t--; timer.textContent=t; if(t<=0){ clearInterval(itv); lock(); } },1000);
+  }
+  function render(){
+    const cur=questions[i];
+    q.textContent=(i+1)+". "+cur.t; choices.innerHTML=''; sel=-1; next.disabled=true;
+    cur.c.forEach((txt,idx)=>{ const b=document.createElement('button'); b.textContent=txt; b.onclick=()=>{sel=idx; next.disabled=false;}; choices.append(b); });
+    startTimer();
+  }
+  function lock(){
+    next.disabled=false;
+    [...choices.children].forEach((btn,idx)=>{
+      btn.disabled=true;
+      if(idx===questions[i].a) btn.style.background="#d1fae5";
+      if(idx===sel && sel!==questions[i].a) btn.style.background="#fee2e2";
+    });
+  }
+  next.onclick=()=>{
+    clearInterval(itv);
+    if(sel===questions[i].a) score++;
+    if(i<questions.length-1){ i++; render(); }
+    else { q.textContent="Terminé !"; choices.innerHTML=''; next.disabled=true; result.textContent="Score : "+score+"/"+questions.length; }
+  };
+  render();
+</script>
+</body>
+</html>

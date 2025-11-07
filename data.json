@@ -1,0 +1,18 @@
+[
+    {
+      "title": "Ampoule LED 12W",
+      "image": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='180'><rect width='100%' height='100%' fill='%23e5f3ff'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='20'>Ampoule</text></svg>",
+      "price": 2500
+    },
+    {
+      "title": "Panneau Solaire 50W",
+      "image": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='180'><rect width='100%' height='100%' fill='%23eaffea'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='20'>Panneau 50W</text></svg>",
+      "price": 15000
+    },
+    {
+      "title": "Rallonge 5m",
+      "image": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='180'><rect width='100%' height='100%' fill='%23fff5e5'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='20'>Rallonge 5m</text></svg>",
+      "price": 4500
+    }
+  ]
+  

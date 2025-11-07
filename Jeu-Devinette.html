@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Devine le nombre</title>
+<style>
+  body { font-family: system-ui, Arial; background:#f6f9ff; display:flex; min-height:100vh; align-items:center; justify-content:center; }
+  .card { background:#fff; width:520px; max-width:94vw; padding:20px; border-radius:14px; box-shadow:0 10px 26px rgba(0,0,0,.08); }
+  h1 { margin:0 0 8px; font-size:22px; }
+  p { margin:8px 0; color:#444; }
+  .row { display:flex; gap:8px; margin:12px 0; }
+  input[type=number]{ flex:1; padding:10px; border:1px solid #ddd; border-radius:10px; }
+  button{ padding:10px 14px; border:0; background:#4CAF50; color:#fff; border-radius:10px; cursor:pointer; }
+  button.secondary{ background:#2f80ed; }
+  .log { background:#f9fafb; border:1px dashed #ddd; border-radius:10px; padding:10px; min-height:48px; white-space:pre-wrap; }
+  .muted { color:#666; font-size:14px; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>Devine le nombre (1–100)</h1>
+    <p class="muted">L’ordinateur choisit un nombre secret. Tu as <strong id="triesLeft">10</strong> essais.</p>
+
+    <div class="row">
+      <input id="guess" type="number" placeholder="Ta proposition..." min="1" max="100"/>
+      <button id="tryBtn">Essayer</button>
+      <button id="resetBtn" class="secondary">Rejouer</button>
+    </div>
+
+    <p id="hint">Fais une proposition pour commencer.</p>
+    <div class="log" id="log"></div>
+  </div>
+
+<script>
+  const guess = document.getElementById('guess');
+  const tryBtn = document.getElementById('tryBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  const hint = document.getElementById('hint');
+  const log = document.getElementById('log');
+  const triesLeft = document.getElementById('triesLeft');
+
+  let secret, tries, history;
+
+  function newGame() {
+    secret = Math.floor(Math.random()*100) + 1;
+    tries = 10;
+    history = [];
+    triesLeft.textContent = String(tries);
+    hint.textContent = 'Fais une proposition pour commencer.';
+    log.textContent = '';
+    guess.disabled = false;
+    tryBtn.disabled = false;
+    guess.value = '';
+    guess.focus();
+  }
+
+  function play() {
+    const n = Number(guess.value);
+    if (!Number.isInteger(n) || n < 1 || n > 100) {
+      hint.textContent = 'Entre un entier entre 1 et 100.';
+      return;
+    }
+
+    if (history.includes(n)) {
+      hint.textContent = 'Tu as déjà essayé ' + n + ' !';
+      return;
+    }
+
+    history.push(n);
+    tries--;
+    triesLeft.textContent = String(tries);
+    log.textContent = 'Essais : ' + history.join(', ');
+
+    if (n === secret) {
+      hint.textContent = 'Bravo ! ' + n + ' est correct 🎉';
+      endGame();
+      return;
+    }
+
+    if (tries === 0) {
+      hint.textContent = 'Perdu 😅 Le nombre était ' + secret + '.';
+      endGame();
+      return;
+    }
+
+    hint.textContent = n < secret ? 'Trop bas ⬇️' : 'Trop haut ⬆️';
+    guess.value = '';
+    guess.focus();
+  }
+
+  function endGame() {
+    guess.disabled = true;
+    tryBtn.disabled = true;
+  }
+
+  tryBtn.addEventListener('click', play);
+  guess.addEventListener('keydown', (e)=>{ if (e.key==='Enter') play(); });
+  resetBtn.addEventListener('click', newGame);
+
+  newGame();
+</script>
+</body>
+</html>

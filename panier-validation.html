@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mini Panier</title>
+<style>
+  body{font-family:Arial;background:#f5f5f5;display:grid;place-items:center;min-height:100vh}
+  .app{background:#fff;padding:20px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.08);width:700px;max-width:95vw}
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+  .card{border:1px solid #eee;border-radius:10px;padding:10px;background:#fafafa}
+  .row{display:flex;justify-content:space-between;margin-top:12px}
+  button{padding:8px 10px;border:0;border-radius:8px;background:#2f80ed;color:#fff;cursor:pointer}
+  table{width:100%;border-collapse:collapse;margin-top:14px}
+  th,td{border-bottom:1px solid #eee;padding:8px;text-align:left}
+  .danger{background:#e64b3c}
+</style>
+</head>
+<body>
+<div class="app">
+  <h1>Produits</h1>
+  <div class="grid" id="products"></div>
+  <h2>Panier</h2>
+  <table>
+    <thead><tr><th>Produit</th><th>Qté</th><th>Prix</th><th>Total</th><th></th></tr></thead>
+    <tbody id="cartRows"></tbody>
+  </table>
+  <div class="row">
+    <strong id="grandTotal">Total: 0</strong>
+    <button id="clear" class="danger">Vider</button>
+  </div>
+</div>
+<script>
+  const products=[
+    {id:1,name:'Lampe LED',price:2500},
+    {id:2,name:'Prise murale',price:1500},
+    {id:3,name:'Câble 2m',price:1200},
+    {id:4,name:'Interrupteur',price:1800},
+  ];
+  const cart={}; // id -> {item, qty}
+  const fmt=n=> new Intl.NumberFormat('fr-FR',{style:'currency',currency:'XOF',maximumFractionDigits:0}).format(n);
+  const productsDiv=document.getElementById('products');
+  const cartRows=document.getElementById('cartRows');
+  const grandTotal=document.getElementById('grandTotal');
+
+  function renderProducts(){
+    productsDiv.innerHTML='';
+    products.forEach(p=>{
+      const div=document.createElement('div'); div.className='card';
+      div.innerHTML='<strong>'+p.name+'</strong><div>'+fmt(p.price)+'</div>';
+      const btn=document.createElement('button'); btn.textContent='Ajouter';
+      btn.onclick=()=>addToCart(p);
+      div.append(btn); productsDiv.append(div);
+    });
+  }
+  function addToCart(p){ if(!cart[p.id]) cart[p.id]={item:p, qty:0}; cart[p.id].qty++; renderCart(); }
+  function remove(id){ delete cart[id]; renderCart(); }
+  function renderCart(){
+    cartRows.innerHTML=''; let total=0;
+    Object.values(cart).forEach(({item,qty})=>{
+      const tr=document.createElement('tr'); const line=item.price*qty; total+=line;
+      tr.innerHTML='<td>'+item.name+'</td><td>'+qty+'</td><td>'+fmt(item.price)+'</td><td>'+fmt(line)+'</td>';
+      const td=document.createElement('td'); const b=document.createElement('button'); b.textContent='Supprimer'; b.className='danger'; b.onclick=()=>remove(item.id);
+      td.append(b); tr.append(td); cartRows.append(tr);
+    });
+    grandTotal.textContent='Total: '+fmt(total);
+  }
+  document.getElementById('clear').onclick=()=>{ for(const k in cart) delete cart[k]; renderCart(); };
+  renderProducts(); renderCart();
+</script>
+</body>
+</html>

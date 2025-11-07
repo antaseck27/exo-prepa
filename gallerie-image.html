@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Galerie</title>
+<style>
+  body{font-family:Arial;background:#fafafa;display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:30px;}
+  .main img{width:300px;border-radius:10px;}
+  .thumbs img{width:70px;border-radius:8px;margin:5px;cursor:pointer;border:2px solid transparent;}
+  .thumbs img:hover{border-color:#007bff;}
+</style>
+</head>
+<body>
+  <h3>Galerie d’images</h3>
+  <div class="main"><img id="big" src="https://picsum.photos/300?1" alt=""></div>
+  <div class="thumbs">
+    <img src="https://picsum.photos/100?1" data-src="https://picsum.photos/300?1">
+    <img src="https://picsum.photos/100?2" data-src="https://picsum.photos/300?2">
+    <img src="https://picsum.photos/100?3" data-src="https://picsum.photos/300?3">
+    <img src="https://picsum.photos/100?4" data-src="https://picsum.photos/300?4">
+  </div>
+
+<script>
+  const big=document.getElementById('big');
+  document.querySelectorAll('.thumbs img').forEach(img=>{
+    img.onclick=()=>big.src=img.dataset.src;
+  });
+</script>
+</body>
+</html>

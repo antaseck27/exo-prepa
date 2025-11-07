@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>To-Do List</title>
+<style>
+  body { font-family: system-ui, Arial; background:#f7fafc; display:flex; justify-content:center; min-height:100vh; padding:40px; }
+  .app { background:#fff; width:520px; max-width:92vw; border-radius:14px; box-shadow:0 8px 24px rgba(0,0,0,.08); padding:18px; }
+  h1 { margin:0 0 12px; font-size:22px; }
+  form { display:flex; gap:8px; margin-bottom:12px; }
+  input[type=text]{ flex:1; padding:10px; border:1px solid #ddd; border-radius:10px; }
+  button { padding:10px 14px; border:0; background:#2f80ed; color:#fff; border-radius:10px; cursor:pointer; }
+  .toolbar { display:flex; gap:8px; margin:10px 0 14px; }
+  select, .clear { padding:8px 10px; border:1px solid #ddd; background:#fafafa; border-radius:10px; }
+  ul { list-style:none; padding:0; margin:0; }
+  li { display:flex; align-items:center; justify-content:space-between; border:1px solid #eee; padding:10px; border-radius:10px; margin-bottom:8px; background:#fcfcfc; }
+  li.done { opacity:.7; text-decoration: line-through; }
+  .left { display:flex; align-items:center; gap:10px; }
+  .danger { background:#e64b3c; }
+  .muted { color:#666; font-size:14px; margin-top:8px; }
+</style>
+</head>
+<body>
+  <div class="app">
+    <h1>To-Do List</h1>
+    <form id="taskForm">
+      <input id="taskInput" type="text" placeholder="Ajouter une tâche..." required/>
+      <button>Ajouter</button>
+    </form>
+
+    <div class="toolbar">
+      <select id="filter">
+        <option value="all">Toutes</option>
+        <option value="active">Actives</option>
+        <option value="done">Terminées</option>
+      </select>
+      <button class="clear danger" id="clearDone" type="button">Supprimer terminées</button>
+    </div>
+
+    <ul id="list"></ul>
+    <div class="muted" id="stats">0 tâche</div>
+  </div>
+
+<script>
+  const KEY = 'todo.tasks.v1';
+  const $ = (sel) => document.querySelector(sel);
+  const list = $('#list');
+  const input = $('#taskInput');
+  const form = $('#taskForm');
+  const filterSel = $('#filter');
+  const stats = $('#stats');
+
+  let tasks = load();
+
+  function load() {
+    try { return JSON.parse(localStorage.getItem(KEY)) ?? []; }
+    catch { return []; }
+  }
+  function save() { localStorage.setItem(KEY, JSON.stringify(tasks)); }
+
+  function addTask(title) {
+    tasks.push({ id: Date.now(), title, done:false });
+    save(); render();
+  }
+  function toggle(id) {
+    const t = tasks.find(x => x.id === id);
+    if (t) t.done = !t.done;
+    save(); render();
+  }
+  function remove(id) {
+    tasks = tasks.filter(t => t.id !== id);
+    save(); render();
+  }
+  function clearDone() {
+    tasks = tasks.filter(t => !t.done);
+    save(); render();
+  }
+
+  function render() {
+    const f = filterSel.value;
+    const filtered = tasks.filter(t => f==='all' ? true : f==='done' ? t.done : !t.done);
+
+    list.innerHTML = '';
+    for (const t of filtered) {
+      const li = document.createElement('li');
+      if (t.done) li.classList.add('done');
+
+      const left = document.createElement('div');
+      left.className = 'left';
+
+      const cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.checked = t.done;
+      cb.addEventListener('change', () => toggle(t.id));
+
+      const span = document.createElement('span');
+      span.textContent = t.title;
+
+      left.append(cb, span);
+
+      const del = document.createElement('button');
+      del.textContent = 'Supprimer';
+      del.className = 'danger';
+      del.addEventListener('click', () => remove(t.id));
+
+      li.append(left, del);
+      list.append(li);
+    }
+
+    const total = tasks.length;
+    const done = tasks.filter(t=>t.done).length;
+    stats.textContent = `${total} tâche${total>1?'s':''} • ${done} terminée${done>1?'s':''}`;
+  }
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const title = input.value.trim();
+    if (!title) return;
+    addTask(title);
+    input.value = '';
+    input.focus();
+  });
+
+  $('#clearDone').addEventListener('click', clearDone);
+  filterSel.addEventListener('change', render);
+
+  render();
+</script>
+</body>
+</html>

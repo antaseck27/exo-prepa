@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Filtre de noms</title>
+<style>
+  body{font-family:Arial;display:flex;justify-content:center;align-items:center;min-height:100vh;background:#eef;}
+  .box{background:#fff;padding:20px;border-radius:10px;box-shadow:0 4px 10px rgba(0,0,0,0.1);width:300px;}
+  input{width:100%;padding:10px;border:1px solid #ccc;border-radius:8px;}
+  ul{list-style:none;padding:0;margin-top:10px;}
+  li{padding:6px;border-bottom:1px solid #eee;}
+</style>
+</head>
+<body>
+<div class="box">
+  <h3>Filtrer la liste</h3>
+  <input id="search" placeholder="Rechercher un nom...">
+  <ul id="list"></ul>
+</div>
+
+<script>
+  const noms=["Awa","Karim","Léo","Mariam","Sonia","Abdou","Issa","Fatou","Youssouf","Nadia"];
+  const list=document.getElementById('list');
+  const search=document.getElementById('search');
+
+  function afficher(data){ list.innerHTML=data.map(n=>`<li>${n}</li>`).join(''); }
+
+  search.addEventListener('input',()=>{
+    const q=search.value.toLowerCase();
+    afficher(noms.filter(n=>n.toLowerCase().includes(q)));
+  });
+
+  afficher(noms);
+</script>
+</body>
+</html>

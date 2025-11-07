@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Compteur avec limites</title>
+<style>
+  body{font-family:Arial;display:flex;justify-content:center;align-items:center;min-height:100vh;background:#f7f7fb;}
+  .card{background:#fff;padding:20px;border-radius:12px;box-shadow:0 4px 10px rgba(0,0,0,0.1);width:300px;text-align:center;}
+  button{margin:5px;padding:10px 15px;border:none;border-radius:8px;background:#007bff;color:white;cursor:pointer;}
+  .danger{background:#dc3545;}
+  #val{font-size:2em;margin:10px 0;}
+  #msg{color:red;height:20px;}
+</style>
+</head>
+<body>
+  <div class="card">
+    <h3>Compteur (−10 à 10)</h3>
+    <div id="val">0</div>
+    <div>
+      <button id="minus">−1</button>
+      <button id="plus">+1</button>
+      <button id="reset" class="danger">Réinitialiser</button>
+    </div>
+    <div id="msg"></div>
+  </div>
+
+<script>
+  const MIN=-10, MAX=10;
+  let n=0;
+  const val=document.getElementById('val');
+  const msg=document.getElementById('msg');
+
+  function render(){ val.textContent=n; msg.textContent=(n<MIN||n>MAX)?'Limite atteinte!':''; }
+
+  document.getElementById('plus').onclick=()=>{ if(n<MAX) n++; render(); };
+  document.getElementById('minus').onclick=()=>{ if(n>MIN) n--; render(); };
+  document.getElementById('reset').onclick=()=>{ n=0; render(); };
+
+  render();
+</script>
+</body>
+</html>

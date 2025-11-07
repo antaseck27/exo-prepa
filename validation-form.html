@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Validateur de formulaire</title>
+<style>
+  body{font-family:Arial;background:#f7fafc;display:grid;place-items:center;min-height:100vh}
+  .card{background:#fff;padding:20px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.08);width:420px}
+  label{display:block;margin:8px 0 4px}
+  input{width:100%;padding:10px;border:1px solid #ddd;border-radius:10px}
+  small{display:block;height:18px;color:#e64b3c}
+  button{margin-top:10px;padding:10px 14px;border:0;border-radius:10px;background:#2f80ed;color:#fff;cursor:pointer;width:100%}
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>Inscription</h1>
+  <label>Email</label>
+  <input id="email" type="email" placeholder="exemple@mail.com">
+  <small id="eMsg"></small>
+
+  <label>Mot de passe</label>
+  <input id="pwd" type="password" placeholder="Min 8, 1 chiffre">
+  <small id="pMsg"></small>
+
+  <label>Confirmer</label>
+  <input id="cpwd" type="password">
+  <small id="cMsg"></small>
+
+  <button id="submit">Créer le compte</button>
+</div>
+<script>
+  const email=document.getElementById('email');
+  const pwd=document.getElementById('pwd');
+  const cpwd=document.getElementById('cpwd');
+  const eMsg=document.getElementById('eMsg');
+  const pMsg=document.getElementById('pMsg');
+  const cMsg=document.getElementById('cMsg');
+  const reEmail=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  function validateEmail(){ if(!reEmail.test(email.value)){ eMsg.textContent='Email invalide'; return false; } eMsg.textContent=''; return true; }
+  function validatePwd(){ const v=pwd.value; if(v.length<8 || !/\d/.test(v)){ pMsg.textContent='Min 8 caractères et 1 chiffre'; return false; } pMsg.textContent=''; return true; }
+  function validateConfirm(){ if(cpwd.value!==pwd.value){ cMsg.textContent='Les mots de passe ne correspondent pas'; return false; } cMsg.textContent=''; return true; }
+
+  [email,pwd,cpwd].forEach(i=>i.addEventListener('input',()=>{ validateEmail(); validatePwd(); validateConfirm(); }));
+  document.getElementById('submit').onclick=()=>{ if(validateEmail() & validatePwd() & validateConfirm()) alert('Compte créé !'); };
+</script>
+</body>
+</html>

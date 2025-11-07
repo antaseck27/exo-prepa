@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Citation du jour</title>
+<style>
+  body{font-family:Arial;background:#f6f6ff;display:grid;place-items:center;min-height:100vh}
+  .card{background:#fff;padding:20px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.08);width:520px;text-align:center}
+  blockquote{font-size:20px;margin:10px 0}
+  cite{color:#666}
+  button{padding:10px 14px;border:0;border-radius:10px;background:#2f80ed;color:#fff;cursor:pointer;margin-top:10px}
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>Citation</h1>
+  <blockquote id="text"></blockquote>
+  <cite id="author"></cite><br>
+  <button id="new">Nouvelle citation</button>
+</div>
+<script>
+  const quotes=[
+    {t:'Le savoir est une arme.', a:'Proverbe'},
+    {t:'La simplicité est la sophistication suprême.', a:'Leonardo da Vinci'},
+    {t:'Ils ne savaient pas que c’était impossible, alors ils l’ont fait.', a:'Mark Twain'},
+    {t:'On ne naît pas grand, on le devient.', a:'Anonyme'},
+    {t:'Agis comme s’il était impossible d’échouer.', a:'W. Churchill'}
+  ];
+  let last=-1;
+  const text=document.getElementById('text');
+  const author=document.getElementById('author');
+
+  function pick(){
+    let i; do{ i=Math.floor(Math.random()*quotes.length); }while(i===last && quotes.length>1);
+    last=i; text.textContent='“'+quotes[i].t+'”'; author.textContent='— '+quotes[i].a;
+  }
+  document.getElementById('new').onclick=pick;
+  pick();
+</script>
+</body>
+</html>

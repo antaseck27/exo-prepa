@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contacts</title>
+<style>
+  body{font-family:Arial;background:#eef;padding:30px;}
+  .app{background:#fff;padding:20px;border-radius:10px;max-width:500px;margin:auto;box-shadow:0 4px 10px rgba(0,0,0,0.1);}
+  input{padding:8px;margin:5px;border:1px solid #ccc;border-radius:6px;}
+  button{padding:8px 10px;border:none;border-radius:6px;background:#007bff;color:#fff;cursor:pointer;}
+  table{width:100%;margin-top:10px;border-collapse:collapse;}
+  th,td{border-bottom:1px solid #ddd;padding:6px;text-align:left;}
+  .del{background:#dc3545;}
+</style>
+</head>
+<body>
+<div class="app">
+  <h3>Gestionnaire de contacts</h3>
+  <input id="nom" placeholder="Nom">
+  <input id="tel" placeholder="Téléphone">
+  <button id="ajouter">Ajouter</button>
+  <table>
+    <thead><tr><th>Nom</th><th>Téléphone</th><th></th></tr></thead>
+    <tbody id="liste"></tbody>
+  </table>
+</div>
+
+<script>
+  let contacts=JSON.parse(localStorage.getItem('contacts')||'[]');
+  const liste=document.getElementById('liste');
+
+  function afficher(){
+    liste.innerHTML=contacts.map(c=>`<tr><td>${c.nom}</td><td>${c.tel}</td><td><button class='del' onclick='supprimer("${c.tel}")'>X</button></td></tr>`).join('');
+  }
+
+  function supprimer(tel){
+    contacts=contacts.filter(c=>c.tel!==tel);
+    localStorage.setItem('contacts',JSON.stringify(contacts));
+    afficher();
+  }
+
+  document.getElementById('ajouter').onclick=()=>{
+    const nom=document.getElementById('nom').value.trim();
+    const tel=document.getElementById('tel').value.trim();
+    if(nom && tel){
+      contacts.push({nom,tel});
+      localStorage.setItem('contacts',JSON.stringify(contacts));
+      afficher();
+      document.getElementById('nom').value=document.getElementById('tel').value="";
+    }
+  };
+
+  afficher();
+</script>
+</body>
+</html>

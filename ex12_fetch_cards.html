@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fetch JSON + Cartes</title>
+<style>
+  body{font-family:Arial;background:#f6f9ff;margin:0;padding:20px}
+  .wrap{max-width:1000px;margin:0 auto}
+  .controls{display:flex;gap:12px;align-items:center;margin-bottom:12px}
+  input[type=range]{flex:1}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+  .card{background:#fff;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.08);padding:10px}
+  .card img{width:100%;height:140px;object-fit:cover;border-radius:10px}
+  .error{color:#e64b3c;margin:10px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Articles</h1>
+  <div class="controls">
+    <label for="price">Prix max:</label>
+    <input id="price" type="range" min="0" max="20000" step="500" value="20000">
+    <span id="val">20000</span> XOF
+  </div>
+  <div id="error" class="error"></div>
+  <div id="grid" class="grid"></div>
+</div>
+<script>
+  const price=document.getElementById('price'), val=document.getElementById('val');
+  const grid=document.getElementById('grid'), error=document.getElementById('error');
+  const fmt=n=> new Intl.NumberFormat('fr-FR',{style:'currency',currency:'XOF',maximumFractionDigits:0}).format(n);
+  let items=[];
+  async function load(){
+    try{
+      const res=await fetch('data.json');
+      if(!res.ok) throw new Error('HTTP '+res.status);
+      items = await res.json();
+      render();
+    }catch(e){
+      error.textContent='Erreur de chargement: '+e.message;
+    }
+  }
+  function render(){
+    error.textContent=''; grid.innerHTML='';
+    const max=Number(price.value); val.textContent=max;
+    items.filter(x=>x.price<=max).forEach(x=>{
+      const div=document.createElement('div'); div.className='card';
+      const img=document.createElement('img'); img.src=x.image; img.alt=x.title;
+      const h=document.createElement('h3'); h.textContent=x.title;
+      const p=document.createElement('p'); p.textContent=fmt(x.price);
+      div.append(img,h,p); grid.append(div);
+    });
+  }
+  price.addEventListener('input', render);
+  load();
+</script>
+</body>
+</html>
